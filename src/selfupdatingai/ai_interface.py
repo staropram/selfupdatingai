@@ -51,7 +51,7 @@ class AIInterface:
 
         outputs = self.model.generate(
             **inputs,
-            max_new_tokens=100,
+            max_new_tokens=self.max_new_tokens,
             do_sample=deterministic
         )
 
@@ -77,6 +77,8 @@ class AIInterface:
         self.model_name = config["model"]["name"]
 
         self.adapter_name = config["model"]["adapter"]
+
+        self.max_new_tokens = config["model"]["max_new_tokens"]
 
         self.message_list = []
 

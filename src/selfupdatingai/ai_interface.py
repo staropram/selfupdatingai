@@ -78,7 +78,7 @@ class AIInterface:
 
         self.adapter_name = config["model"]["adapter"]
 
-        self.max_new_tokens = config["model"]["max_new_tokens"]
+        self.max_new_tokens = config["generation"]["max_new_tokens"]
 
         self.message_list = []
 

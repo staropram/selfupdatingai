@@ -20,6 +20,8 @@ class AIInterface:
             today_string = datetime.now().strftime("%d_%m_%Y")
             self.current_chat_filename = f"chats/{chat_id}_{today_string}.json"
 
+        print(f"saving {self.current_chat_filename}")
+
         # save as json
         with open(self.current_chat_filename, "w", encoding="utf-8") as f:
             json.dump(self.message_list, f, indent=2, ensure_ascii=False)
@@ -29,6 +31,8 @@ class AIInterface:
         try:
             with open(chat_filename,"r",encoding="utf-8") as f:
                 self.message_list = json.load(f)
+            # if that worked make sure we set the current chat filename
+            self.current_chat_filename = chat_filename
         except Exception as error:
             self.message_list = [
                 {"role": "assistant", "content": f"Could not load chat: {error}"}

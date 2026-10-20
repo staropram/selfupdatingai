@@ -1,0 +1,6 @@
+[
+{
+    "role": "assistant",
+    "content": "```json\n{\"type\": \"training\", \"name\": \"Acknowledging missing information\", \"examples\": [{\"messages\": [{\"role\": \"user\", \"content\": \"What colour is my car?\"}, {\"role\": \"assistant\", \"content\": \"I don’t know—you haven’t told me.\"}]}]}\n```"
+}
+]

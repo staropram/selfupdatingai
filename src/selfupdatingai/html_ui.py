@@ -41,6 +41,13 @@ class HTMLUI:
         # keep track of available chats
         self.available_chat_buttons = []
 
+        # sub method the tabs
+        self.build_chat_tab()
+        self.build_training_tab()
+        self.build_inspection-tab()
+
+
+    def build_chat_tab(self):
         with gr.Tab("Chat"):
             with gr.Sidebar() as self.chat_selection_sidebar:
 
@@ -81,11 +88,15 @@ class HTMLUI:
                 interactive=False,
             )
 
+
+    def build_training_tab(self):
         with gr.Tab("Train"):
             gr.Markdown("Training tab")
 
+    def build_inspection_tab(self):
         with gr.Tab("Inspect"):
             gr.Markdown("Inspection tab")
+    
 
     def connect_events(self):
 

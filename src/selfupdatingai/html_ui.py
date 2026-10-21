@@ -1,5 +1,6 @@
 import gradio as gr
 from pathlib import Path
+import selfupdatingai.training as training
 
 
 class HTMLUI:
@@ -15,7 +16,7 @@ class HTMLUI:
         return [f.stem for f in files]
 
     
-    def accept_message(self, message, history):
+    def chat_accept_message(self, message, history):
         if not message.strip():
             return history, message, "Nothing to send."
 
@@ -44,14 +45,17 @@ class HTMLUI:
         # sub method the tabs
         self.build_chat_tab()
         self.build_training_tab()
-        self.build_inspection-tab()
+        self.build_inspection_tab()
+
+    def connect_events(self):
+        self.connect_chat_events()
+        self.connect_training_events()
 
 
     def build_chat_tab(self):
         with gr.Tab("Chat"):
+            # make buttons to select historical chats
             with gr.Sidebar() as self.chat_selection_sidebar:
-
-                # make buttons to select historical chats
                 for chat_name in self.chat_names:
                     button = gr.Button(f"{chat_name}",variant="secondary",size="sm")
                     self.available_chat_buttons.append(button)
@@ -62,7 +66,7 @@ class HTMLUI:
             )
 
             with gr.Row():
-                self.message_box = gr.Textbox(
+                self.chat_message_box = gr.Textbox(
                     placeholder="Write a message...",
                     label="Message",
                     lines=2,
@@ -70,35 +74,32 @@ class HTMLUI:
                     interactive=True
                 )
 
-                self.send_button = gr.Button(
+                self.chat_send_button = gr.Button(
                     "Send",
                     variant="primary",
                     scale=1,
                 )
 
             with gr.Column():
-                self.clear_button = gr.ClearButton(
-                    [self.message_box, self.chatbot],
+                self.chat_clear_button = gr.ClearButton(
+                    [self.chat_message_box, self.chatbot],
                     value="Clear",
                 )
 
-            self.status_box = gr.Textbox(
+            self.chat_status_box = gr.Textbox(
                 value="Ready.",
                 label="Status",
                 interactive=False,
             )
 
 
-    def build_training_tab(self):
-        with gr.Tab("Train"):
-            gr.Markdown("Training tab")
 
     def build_inspection_tab(self):
         with gr.Tab("Inspect"):
             gr.Markdown("Inspection tab")
     
 
-    def connect_events(self):
+    def connect_chat_events(self):
 
         print("Wiring buttons:", len(self.available_chat_buttons))
 
@@ -107,25 +108,71 @@ class HTMLUI:
             button.click(
                 fn=self.load_selected_chat,
                 inputs=[button],
-                outputs=[self.chatbot, self.status_box],
+                outputs=[self.chatbot, self.chat_status_box],
             )
 
-        self.send_button.click(
-            fn=self.accept_message,
-            inputs=[self.message_box, self.chatbot],
-            outputs=[self.chatbot, self.message_box, self.status_box],
+        self.chat_send_button.click(
+            fn=self.chat_accept_message,
+            inputs=[self.chat_message_box, self.chatbot],
+            outputs=[self.chatbot, self.chat_message_box, self.chat_status_box],
         )
 
-        self.message_box.submit(
-            fn=self.accept_message,
-            inputs=[self.message_box, self.chatbot],
-            outputs=[self.chatbot, self.message_box, self.status_box],
+        self.chat_message_box.submit(
+            fn=self.chat_accept_message,
+            inputs=[self.chat_message_box, self.chatbot],
+            outputs=[self.chatbot, self.chat_message_box, self.chat_status_box],
         )
 
-        self.clear_button.click(
+        self.chat_clear_button.click(
             fn=lambda: "Ready.",
-            outputs=self.status_box,
+            outputs=self.chat_status_box,
         )
+
+    def build_training_tab(self):
+        self.training_chat_selector_buttons = []
+
+        with gr.Tab("Train"):
+            gr.Markdown("Training tab")
+
+
+            # make buttons to select historical chats
+            with gr.Sidebar() as self.chat_selection_sidebar:
+                for chat_name in self.chat_names:
+                    button = gr.Button(f"{chat_name}",variant="secondary",size="sm")
+                    self.training_chat_selector_buttons.append(button)
+
+            self.training_checkboxes = []
+
+            self.training_data_selector = gr.Textbox(
+                value="Ready.",
+                label="Placeholder for data selector",
+                interactive=False,
+            )
+
+            #for i, example in enumerate(training_examples):
+            #    with gr.Column():
+            #        checkbox = gr.Checkbox(label=f"Example {i + 1}")
+            #        self.training_checkboxes.append(checkbox)
+#
+#                    with gr.Accordion("View JSON", open=False):
+#                        gr.JSON(value=example)
+
+    def connect_training_events(self):
+        for button in self.training_chat_selector_buttons:
+            button.click(
+                fn=self.training_extract_data,
+                inputs=[button],
+                outputs=[self.training_data_selector],
+            )
+
+        print("connecting training events")
+
+    def training_extract_data(self,chat_file_stem):
+        file_name = f"chats/{chat_file_stem}.json"
+        training_examples = training.extract_training_examples_from_file(file_name)
+        print("extracting training data")
+        print(training_examples)
+        return training_examples
 
     def load_selected_chat(self,chat_name):
         chat_filename = f"chats/{chat_name}.json"

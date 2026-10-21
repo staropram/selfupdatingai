@@ -1,11 +1,10 @@
-from selfupdatingai.training import extract_training_examples
+from selfupdatingai.training import extract_training_examples_from_file
 import json
 
 def test_training_extraction():
-    with open("tests/test_data/test_training_example_01.json","r",encoding="utf-8") as f:
-        training_example = json.load(f)
-    training_examples = extract_training_examples(training_example)
-    print("ok")
+    file_name = "tests/test_data/test_training_example_01.json"
+    training_examples = extract_training_examples_from_file(file_name)
+    print(training_examples)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,15 @@
 import json
+from pathlib import Path
+
+def extract_training_examples_from_file(file_name):
+    try:
+        with open(file_name,"r",encoding="utf-8") as f:
+            chat_history = json.load(f)
+    except Exception:
+        chat_history = json.loads("[{\"role\":\"user\",\"content\":\"hi\"}]")
+
+    return extract_training_examples(chat_history)
+    
 
 def extract_training_examples(chat_history):
     print("extracting training examples")

@@ -8,6 +8,8 @@ import json
 import random
 import string
 
+import selfupdatingai.training as training
+
 # This handles interfacing with the local chat model
 class AIInterface:
 
@@ -138,6 +140,7 @@ class AIInterface:
             local_files_only=True
         )
 
+         #this is completely pointless at this point
         if self.adapter_name=="":
             print("No adapter supplied, using base model instead")
             self.model = self.base_model
@@ -147,3 +150,11 @@ class AIInterface:
                 self.model = self.load_lora_adapter()
             else:
                 self.model = self.create_lora_adapter()
+
+    def train_model(self,examples,training_config):
+        training.train_model(
+            self.model,
+            self.tokenizer,
+            examples,
+            training_config
+        ) 

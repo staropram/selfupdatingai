@@ -91,7 +91,15 @@ def train_model(model, tokenizer, messages, config):
     # all tokens are valid
     attention_mask = torch.ones_like(input_tensor)
 
-    # now do the forward pass
+    # construct our optimiser for BP
+    optimiser = torch.optim.AdamW(
+        (p for p in model.parameters() if p.requires_grad), # generator for mem efficiency
+        lr=1.e-4, # learning rate
+    )
+
+    ## LEARNING LOOP, need to put it in a loop ;)
+
+    # do the forward pass
     outputs = model(
         input_ids=input_tensor,
         attention_mask=attention_mask,
@@ -102,11 +110,6 @@ def train_model(model, tokenizer, messages, config):
     loss = outputs.loss
     print("Loss:", loss.item())
 
-    # construct our optimiser for BP
-    optimiser = torch.optim.AdamW(
-        (p for p in model.parameters() if p.requires_grad), # generator for mem efficiency
-        lr=1.e-4, # learning rate
-    )
 
     # zero the learning gradients
     optimiser.zero_grad()

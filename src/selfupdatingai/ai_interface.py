@@ -52,6 +52,7 @@ class AIInterface:
         return PeftModel.from_pretrained(
             self.base_model,
             f"adapters/{self.adapter_name}",
+            is_trainable=True
         )
 
     def create_lora_adapter(self):

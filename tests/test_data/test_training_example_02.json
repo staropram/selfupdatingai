@@ -1,6 +1,6 @@
 [
 {
     "role": "assistant",
-    "content": "```json\n{\"type\": \"training\", \"name\": \"Learning name\", \"examples\": [{\"messages\": [{\"role\": \"user\", \"content\": \"What is your name?\"}, {\"role\": \"assistant\", \"content\": \"Bongo.\"}]}]}\n```"
+    "content": "```json\n{\"type\": \"training\", \"name\": \"Learning name\", \"examples\": [{\"messages\": [{\"role\": \"user\", \"content\": \"In one word, what is your name?\"}, {\"role\": \"assistant\", \"content\": \"Bongo\"}]}]}\n```"
 }
 ]

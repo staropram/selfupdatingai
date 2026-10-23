@@ -1,5 +1,4 @@
 import torch
-import tomllib
 from pathlib import Path
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel,LoraConfig,get_peft_model
@@ -108,15 +107,11 @@ class AIInterface:
 
         return response
 
-    def __init__(self):
+    def reset_message_list(self):
+        self.message_list = []
+
+    def __init__(self,config):
         print("Initialising AIInterface")
-
-        # book-keeping, load config
-        PROJECT_ROOT = Path(__file__).resolve().parents[2]
-        CONFIG_PATH = PROJECT_ROOT / "config.toml"
-        with CONFIG_PATH.open("rb") as config_file:
-            config = tomllib.load(config_file)
-
 
         # extract soem params from the config
         self.model_name = config["model"]["name"]
@@ -124,7 +119,8 @@ class AIInterface:
         self.max_new_tokens = config["generation"]["max_new_tokens"]
 
         # setup the initial system prompt (XXX load this later)
-        self.message_list = [{"role":"system","content":"You are a self-learning AI"}]
+        #self.message_list = [{"role":"system","content":"You are a self-learning AI"}]
+        self.message_list = []
 
         # start with an empty chat filename
         self.current_chat_filename = None
@@ -159,3 +155,7 @@ class AIInterface:
             examples,
             training_config
         ) 
+
+    # saves the peft model, the LORA adapter
+    def save_adapter(self,adapter_name):
+        self.model.save_pretrained(f"adapters/{adapter_name}")

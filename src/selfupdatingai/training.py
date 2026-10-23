@@ -98,40 +98,42 @@ def train_model(model, tokenizer, messages, config):
     )
 
     ## LEARNING LOOP, need to put it in a loop ;)
+    # put the model in training mode
+    model.train()
 
-    # do the forward pass
-    outputs = model(
-        input_ids=input_tensor,
-        attention_mask=attention_mask,
-        labels=label_tensor,
-    )
+    max_iterations = 100
+    for epoch in range(0,max_iterations):
 
-    # check loss
-    loss = outputs.loss
-    print("Loss:", loss.item())
-
-
-    # zero the learning gradients
-    optimiser.zero_grad()
-    # run backprop to compute partial derivs
-    loss.backward()
-    # apply the weight changes
-    optimiser.step()
-
-    model.eval()
-
-    # lets see what happened
-    with torch.no_grad():
+        # do the forward pass
         outputs = model(
             input_ids=input_tensor,
             attention_mask=attention_mask,
             labels=label_tensor,
         )
 
-    print("Before:", loss.item())
-    print("After:", outputs.loss.item())
+        # zero the learning gradients
+        optimiser.zero_grad()
+        # get the loss
+        loss = outputs.loss
+        # run backprop to compute partial derivs
+        loss.backward()
+        # apply the weight changes
+        optimiser.step()
 
-    print("end")
+        #model.eval()
+
+        # see if anything changed
+        #with torch.no_grad():
+        #    outputs = model(
+        #        input_ids=input_tensor,
+        #        attention_mask=attention_mask,
+        #        labels=label_tensor,
+        #    )
+
+        print(f"Learning epoch {epoch+1}, current loss: {outputs.loss.item()}")
+
+    # put the model back in eval mode
+    model.eval()
 
 
 
